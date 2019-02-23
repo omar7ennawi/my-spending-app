@@ -40,7 +40,7 @@ export default class LinksScreen extends React.Component {
                  style={[styles.textInput, {flex: 1}]}
                  onChangeText={(desc) => this.setState({ desc })}
                  value={this.state.text}
-                 keyboardType='numeric'
+                 keyboardType='keyboard'
                  placeholder="Description"
                />
              </View>

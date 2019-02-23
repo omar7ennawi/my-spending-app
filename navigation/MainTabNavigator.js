@@ -22,10 +22,10 @@ HomeStack.navigationOptions = {
   ),
 };
 const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+  Add: LinksScreen,
 });
 LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+  tabBarLabel: 'Add',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
