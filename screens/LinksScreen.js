@@ -9,19 +9,53 @@ import {
   DatePickerIOS,
   DatePickerAndroid
 } from "react-native";import { TextInput } from 'react-native-gesture-handler';
+import Firebase from '../api/config'
 
+Firebase
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
     title: 'Add Item',
     width: 20
   };
 
-  state = { amount: '', desc: '', date: new Date() }
+  state = { amount: 0, desc: '', date: new Date() }
+
+  handleAddItem = () => {
+    if( this.state.desc !== '' && this.state.amount !== 0){
+      // push to add, set to update
+      Firebase.database().ref('users/' + 'joel' + '/items').push(
+        {
+          amount: Number(this.state.amount),
+          desc: this.state.desc,
+          date: this.state.date.toLocaleDateString()
+        }
+      )
+      // to switch screens, can add a comma followed by an object to pass back but needs to have a listener in the other screen to capture the data
+      // shouldComponentUpdate(newProps, newState) {
+      //   const valueFromOtherScreen = newProps.navigation.getParam("test", false);
+      //   if (valueFromOtherScreen) {
+      //     alert(valueFromOtherScreen)
+
+      //     const tempItems = this.state.items
+      //     tempItems.push([valueFromOtherScreen])
+
+      //     this.setState({items: tempItems})
+      //     return true
+      //   }
+      //   return false
+      // }
+      this.props.navigation.navigate("Home")
+    }
+    else{
+      alert("Please enter a valid amound and description")
+    }
+  }
+
 
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView keyboardDismissMode={'on-drag'}>
           <View style={styles.row}>
             <Text style={{ fontSize: 18 }}>Price</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -66,7 +100,7 @@ export default class LinksScreen extends React.Component {
              </View>
            </View>
         </ScrollView>
-        <TouchableOpacity onPress={() => alert(JSON.stringify(this.state))} style={styles.tabBarStickyBottom}>
+        <TouchableOpacity onPress={this.handleAddItem} style={styles.tabBarStickyBottom}>
             <Text style={{ fontWeight: 'bold' }}>Add </Text>
           </TouchableOpacity>
       </View>

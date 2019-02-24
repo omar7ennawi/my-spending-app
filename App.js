@@ -2,19 +2,7 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
-//import * as firebase from "firebase";
 
-
-  // Initialize Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyAyEdKo558jOJQ4kKq4j2lXW76IUIVEORI",
-    authDomain: "my-spending-app.firebaseapp.com",
-    databaseURL: "https://my-spending-app.firebaseio.com",
-    projectId: "my-spending-app",
-    storageBucket: "my-spending-app.appspot.com",
-    messagingSenderId: "711123492369"
-  };
-  export const Firebase = firebase.initializeApp(firebaseConfig);
 
 export default class App extends React.Component {
   state = {

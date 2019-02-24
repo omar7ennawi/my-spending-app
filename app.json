@@ -1,14 +1,17 @@
 {
   "expo": {
-    "name": "my-spending-app",
+    "name": "My Spending app",
     "slug": "my-spending-app",
     "privacy": "public",
     "sdkVersion": "32.0.0",
+	"android": {
+		"package": "com.apigate.spendingapp"
+	},
     "platforms": [
       "ios",
       "android"
     ],
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -24,6 +27,7 @@
     ],
     "ios": {
       "supportsTablet": true
+	  
     }
   }
 }
