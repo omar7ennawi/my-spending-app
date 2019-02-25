@@ -4,21 +4,25 @@ import {
   StyleSheet,
   Text,
   Platform,
+  Button,
+  Image,
   View,
   TouchableOpacity,
   DatePickerIOS,
   DatePickerAndroid
 } from "react-native";import { TextInput } from 'react-native-gesture-handler';
 import Firebase from '../api/config'
+import { ImagePicker, Permissions } from "expo";
+import uuid from "uuid";
 
-Firebase
+
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
     title: 'Add Item',
     width: 20
   };
 
-  state = { amount: 0, desc: '', date: new Date() }
+  state = { amount: 0, desc: '', date: new Date(), image: null }
 
   handleAddItem = () => {
     if( this.state.desc !== '' && this.state.amount !== 0){
@@ -27,7 +31,8 @@ export default class LinksScreen extends React.Component {
         {
           amount: Number(this.state.amount),
           desc: this.state.desc,
-          date: this.state.date.toLocaleDateString()
+          date: this.state.date.toLocaleDateString(),
+          picture: this.state.image
         }
       )
       // to switch screens, can add a comma followed by an object to pass back but needs to have a listener in the other screen to capture the data
@@ -53,6 +58,7 @@ export default class LinksScreen extends React.Component {
 
 
   render() {
+    const { image } = this.state;
     return (
       <View style={styles.container}>
         <ScrollView keyboardDismissMode={'on-drag'}>
@@ -99,6 +105,43 @@ export default class LinksScreen extends React.Component {
                }
              </View>
            </View>
+           <Button
+            title="Pick an image from camera roll"
+            onPress={async () => {
+              // Ask for permission
+              const { status } = await Permissions.askAsync(
+                Permissions.CAMERA_ROLL
+              );
+              if (status === "granted") {
+                // Do camera stuff
+                let result = await ImagePicker.launchImageLibraryAsync({
+                  allowsEditing: true,
+                  aspect: [4, 3]
+                });
+
+                console.log(result);
+
+                if (!result.cancelled) {
+                  this.setState({ image: result.uri });
+                  const imageURL = await uploadImageAsync(result.uri)
+                  this.setState({image: imageURL})
+                }
+              } else {
+                // Permission denied
+                throw new Error("Camera permission not granted");
+              }
+              
+            }}
+          />
+          {image && (
+            <Text>{image}</Text>
+          )}
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 200, height: 200 }}
+            />
+          )}
         </ScrollView>
         <TouchableOpacity onPress={this.handleAddItem} style={styles.tabBarStickyBottom}>
             <Text style={{ fontWeight: 'bold' }}>Add </Text>
@@ -106,6 +149,35 @@ export default class LinksScreen extends React.Component {
       </View>
     );
   }
+}
+
+async function uploadImageAsync(uri) {
+  // Why are we using XMLHttpRequest? See:
+  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function(e) {
+      console.log(e);
+      reject(new TypeError('Network request failed'));
+    };
+    xhr.responseType = 'blob';
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+  });
+
+  const ref = Firebase
+    .storage()
+    .ref()
+    .child(uuid.v4());
+  const snapshot = await ref.put(blob);
+
+  // We're done with the blob, close and release it
+  blob.close();
+  alert(snapshot.ref.getDownloadURL())
+  return await snapshot.ref.getDownloadURL();
 }
 
 const styles = StyleSheet.create({
@@ -145,7 +217,7 @@ const styles = StyleSheet.create({
       },
     }),
     alignItems: 'center',
-    backgroundColor: '#fbfbfb',
+    backgroundColor: '#f66666',
     paddingVertical: 20,
     flexDirection: 'row',
     justifyContent: 'center',    

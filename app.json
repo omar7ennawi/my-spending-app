@@ -4,9 +4,9 @@
     "slug": "my-spending-app",
     "privacy": "public",
     "sdkVersion": "32.0.0",
-	"android": {
-		"package": "com.apigate.spendingapp"
-	},
+    "android": {
+      "package": "com.apigate.spendingapp"
+    },
     "platforms": [
       "ios",
       "android"
@@ -27,7 +27,7 @@
     ],
     "ios": {
       "supportsTablet": true
-	  
-    }
+    },
+    "description": ""
   }
 }
